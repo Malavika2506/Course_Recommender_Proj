@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "./authSlice";
+import { registerUser } from "./authSlice";
+
 
 export default function LoginPage() {
   const [isRegister, setIsRegister] = useState(false);
@@ -12,41 +16,62 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   // ---------------- LOGIN HANDLER ----------------
-  const handleLogin = (e) => {
-    e.preventDefault();
+const dispatch = useDispatch();
+const { loading, error } = useSelector((state) => state.auth);
 
-    if (!email || !password) {
-      alert("Please enter email and password!");
-      return;
-    }
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    // ADMIN EMAIL CHECK
-    if (email.endsWith("@cybersquare.org")) {
+  if (!email || !password) {
+    alert("Please enter email and password!");
+    return;
+  }
+
+  const result = await dispatch(loginUser({ email, password }));
+
+  if (loginUser.fulfilled.match(result)) {
+    const role = result.payload.user.role;
+
+    if (role === "admin") {
       navigate("/admin");
     } else {
       navigate("/student");
     }
-  };
+  }
+};
+
 
   // ---------------- REGISTER HANDLER ----------------
-  const handleRegister = (e) => {
-    e.preventDefault();
 
-    if (!regName || !regEmail || !regPassword) {
-      alert("Please fill all fields!");
-      return;
-    }
+const handleRegister = async (e) => {
+  e.preventDefault();
 
-    alert("Account created! You can now login.");
+  if (!regName || !regEmail || !regPassword) {
+    alert("Please fill all fields!");
+    return;
+  }
+
+  const result = await dispatch(
+    registerUser({
+      name: regName,
+      email: regEmail,
+      password: regPassword,
+    })
+  );
+
+  if (registerUser.fulfilled.match(result)) {
+    alert("Account created! Please login.");
     setIsRegister(false);
-  };
+  } else {
+    alert(result.payload || "Registration failed");
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-pink-100 px-4">
       <div
         className="relative w-full max-w-4xl h-auto md:h-[460px] rounded-2xl shadow-2xl overflow-hidden transition-all duration-700 bg-white"
       >
-        {/* LEFT PANEL */}
         <div
           className={`absolute top-0 left-0 h-full flex flex-col items-center justify-center px-8 py-10 md:px-10 text-center transition-all duration-700
             ${
@@ -85,13 +110,11 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* RIGHT PANEL FORM */}
         <div
           className={`absolute top-0 right-0 h-full flex items-center justify-center transition-all duration-700
             ${isRegister ? "-translate-x-full" : ""}
             w-full md:w-1/2`}
         >
-          {/* LOGIN FORM */}
           {!isRegister ? (
             <form
               className="w-80 sm:w-96 md:w-72 bg-white md:bg-transparent p-8 md:p-0 rounded-2xl md:rounded-none shadow-lg md:shadow-none"

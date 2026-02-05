@@ -1,58 +1,82 @@
 import { Routes, Route } from "react-router-dom";
+
+/* ---------- PUBLIC ---------- */
 import HomePage from "./pages/HomePage";
 import LoginPage from "./features/auth/LoginPage";
-import Questionnaire from "./features/student/Questionnaire";
-import ResultPage from "./features/student/ResultPage";
+
+/* ---------- AUTH ---------- */
 import ProtectedRoute from "./components/ProtectedRoute";
+
+/* ---------- ADMIN ---------- */
+import AdminLayout from "./features/admin/AdminLayout";
 import AdminDashboard from "./features/admin/AdminDashboard";
+import QuestionManager from "./features/admin/QuestionManager";
+import CourseAnalytics from "./features/admin/CourseAnalytics";
+import StudentList from "./features/admin/StudentList";
+
+/* ---------- STUDENT ---------- */
+import StudentLayout from "./features/student/StudentLayout";
 import StudentDashboard from "./features/student/StudentDashboard";
 import QuestionnaireInstructions from "./features/student/QuestionnaireInstruction";
+import Questionnaire from "./features/student/Questionnaire";
+import ResultPage from "./features/student/ResultPage";
+import CourseDetails from "./features/student/CourseDetails";
 
 function App() {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* ========== PUBLIC ROUTES ========== */}
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Admin Dashboard */}
-      <Route path="/admin" element={<AdminDashboard />} />
-
-      {/* Student Dashboard */}
-      <Route path="/student" element={<StudentDashboard />} />
-
-      {/* Instructions Page */}
+      {/* ========== ADMIN ROUTES ========== */}
       <Route
-        path="/questionnaire-instructions"
+        path="/admin"
         element={
-          // <ProtectedRoute>
-            <QuestionnaireInstructions />
-          // </ProtectedRoute>
+          <ProtectedRoute role="admin">
+            <AdminLayout />
+          </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="questions" element={<QuestionManager />} />
+        <Route path="analytics" element={<CourseAnalytics />} />
+        <Route path="students" element={<StudentList />} />
+      </Route>
 
-      {/* Student Questionnaire */}
+      {/* ========== STUDENT ROUTES ========== */}
       <Route
-        path="/questionnaire"
+        path="/student"
         element={
-          // <ProtectedRoute>
-            <Questionnaire />
-          // </ProtectedRoute>
+          <ProtectedRoute role="student">
+            <StudentLayout />
+          </ProtectedRoute>
         }
-      />
+      >
+        {/* Dashboard */}
+        <Route index element={<StudentDashboard />} />
 
-      {/* Result Page */}
+        {/* Instructions */}
+        <Route
+          path="questionnaire-instructions"
+          element={<QuestionnaireInstructions />}
+        />
+
+        {/* Questionnaire */}
+        <Route path="questionnaire" element={<Questionnaire />} />
+
+        {/* Result */}
+        <Route path="result" element={<ResultPage />} />
+
+        {/* Course Details */}
+        <Route path="courses" element={<CourseDetails />} />
+      </Route>
+
+      {/* ========== 404 ========== */}
       <Route
-        path="/result"
-        element={
-          // <ProtectedRoute>
-            <ResultPage />
-          // </ProtectedRoute>
-        }
+        path="*"
+        element={<h1 className="text-center mt-20">404 | Page Not Found</h1>}
       />
-
-      {/* 404 Page */}
-      <Route path="*" element={<h1>404 Not Found</h1>} />
     </Routes>
   );
 }

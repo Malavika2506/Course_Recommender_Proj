@@ -1,4 +1,5 @@
-import React from "react";
+// src/features/student/StudentDashboard.jsx
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -13,6 +14,15 @@ import { useNavigate } from "react-router-dom";
 export default function StudentDashboard() {
   const navigate = useNavigate();
 
+  // later replace this with backend check
+  const [hasAttempted, setHasAttempted] = useState(false);
+
+  useEffect(() => {
+    // TEMP: check if result exists (replace with API later)
+    const attempted = localStorage.getItem("hasAttempted");
+    if (attempted) setHasAttempted(true);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-6">
       <motion.div
@@ -25,7 +35,7 @@ export default function StudentDashboard() {
         </h1>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Start Questionnaire */}
+          {/* Questionnaire */}
           <motion.div whileHover={{ scale: 1.03 }}>
             <Card className="shadow-lg rounded-2xl">
               <CardHeader className="flex items-center gap-3">
@@ -35,15 +45,21 @@ export default function StudentDashboard() {
               <CardContent>
                 <Button
                   className="w-full rounded-xl"
-                  onClick={() => navigate("/questionnaire-instructions")}
+                  onClick={() =>
+                    navigate(
+                      hasAttempted
+                        ? "questionnaire"
+                        : "questionnaire-instructions"
+                    )
+                  }
                 >
-                  Start Now
+                  {hasAttempted ? "Restart Questionnaire" : "Start Now"}
                 </Button>
               </CardContent>
             </Card>
           </motion.div>
 
-          {/* View Your Results */}
+          {/* View Result */}
           <motion.div whileHover={{ scale: 1.03 }}>
             <Card className="shadow-lg rounded-2xl">
               <CardHeader className="flex items-center gap-3">
@@ -54,7 +70,7 @@ export default function StudentDashboard() {
                 <Button
                   variant="outline"
                   className="w-full rounded-xl"
-                  onClick={() => navigate("/result")}
+                  onClick={() => navigate("result")}
                 >
                   View Result
                 </Button>
@@ -70,7 +86,14 @@ export default function StudentDashboard() {
                 <CardTitle>Logout</CardTitle>
               </CardHeader>
               <CardContent>
-                <Button variant="destructive" className="w-full rounded-xl">
+                <Button
+                  variant="destructive"
+                  className="w-full rounded-xl"
+                  onClick={() => {
+                    localStorage.clear();
+                    navigate("/login");
+                  }}
+                >
                   Logout
                 </Button>
               </CardContent>

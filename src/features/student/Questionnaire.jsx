@@ -9,14 +9,14 @@ export default function Questionnaire() {
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(30 * 60);
 
-  const questions = [
-    { text: "Do you enjoy designing user interfaces?" },
-    { text: "Do you prefer building mobile apps?" },
-    { text: "Do you like frontend web development?" },
-    { text: "Do you enjoy working with server logic?" },
-    { text: "Are you fascinated by AI or ML?" },
-    { text: "Do you like identifying bugs and testing?" },
-  ];
+
+const [questions, setQuestions] = useState([]);
+
+useEffect(() => {
+  fetch("http://localhost:5000/api/questions")
+    .then(res => res.json())
+    .then(data => setQuestions(data));
+}, []);
 
   // Timer
   useEffect(() => {
@@ -37,10 +37,20 @@ export default function Questionnaire() {
   const sec = String(timeLeft % 60).padStart(2, "0");
 
   // Submit
-  function submitForm() {
-    localStorage.setItem("answers", JSON.stringify(answers));
-    navigate("/result");
-  }
+async function submitForm() {
+  await fetch("http://localhost:5000/api/result/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // token from auth context
+    },
+    body: JSON.stringify({ answers }),
+  });
+
+  navigate("../result");
+}
+
+
 
   // Auto-next on yes/no
   function choose(ans) {
@@ -49,6 +59,27 @@ export default function Questionnaire() {
       setIndex(index + 1);
     }
   }
+
+  useEffect(() => {
+  const blockNavigation = (e) => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
+
+  window.addEventListener("beforeunload", blockNavigation);
+  window.history.pushState(null, "", window.location.href);
+
+  const preventBack = () => {
+    window.history.pushState(null, "", window.location.href);
+  };
+
+  window.addEventListener("popstate", preventBack);
+
+  return () => {
+    window.removeEventListener("beforeunload", blockNavigation);
+    window.removeEventListener("popstate", preventBack);
+  };
+}, []);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-slate-950 px-4">
@@ -73,7 +104,9 @@ export default function Questionnaire() {
           Question {index + 1}/{questions.length}
         </h2>
 
-        <h1 className="text-2xl font-bold mb-8">{questions[index].text}</h1>
+<h1 className="text-2xl font-bold mb-8">
+  {questions[index]?.text}
+</h1>
 
         {/* YES / NO */}
         <div className="flex gap-6 justify-center">
