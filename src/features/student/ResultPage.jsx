@@ -3,17 +3,37 @@ import { useEffect, useState } from "react";
 export default function ResultPage() {
   const [result, setResult] = useState(null);
   const [showMore, setShowMore] = useState(false);
+  const courseDetails = {
+  mern: "Full stack development using MongoDB, Express, React, and Node.js.",
+  flutter: "Cross-platform mobile app development using Flutter.",
+  datasci: "Data analysis, visualization, and machine learning foundations.",
+  cybersecurity: "Security fundamentals, networks, and ethical hacking.",
+  react: "Frontend development with React ecosystem.",
+  pythonfs: "Backend development using Python and frameworks.",
+  uiux: "User interface and user experience design principles.",
+  devops: "CI/CD, cloud, containers, and deployment automation.",
+};
+
+
   useEffect(() => {
     fetch("http://localhost:5000/api/result/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: "include",
     })
-      .then((res) => res.json())
-      .then((data) => setResult(data));
+      .then((res) => {
+        if (!res.ok) throw new Error("No result found");
+        return res.json();
+      })
+      .then((data) => setResult(data))
+      .catch((err) => console.error(err));
   }, []);
 
-  if (!result) return <p className="text-white">Loading...</p>;
+  if (!result) {
+    return (
+      <p className="text-white text-center mt-10">
+        No result found. Please complete the questionnaire.
+      </p>
+    );
+  }
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-slate-950 px-4">

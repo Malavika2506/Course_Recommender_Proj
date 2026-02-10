@@ -11,6 +11,8 @@ export default function Questionnaire() {
 
 
 const [questions, setQuestions] = useState([]);
+const [submitted, setSubmitted] = useState(false);
+
 
 useEffect(() => {
   fetch("http://localhost:5000/api/questions")
@@ -38,17 +40,24 @@ useEffect(() => {
 
   // Submit
 async function submitForm() {
-  await fetch("http://localhost:5000/api/result/submit", {
+  if (submitted) return;   // 🔒 prevent double submit
+  setSubmitted(true);
+
+  const res = await fetch("http://localhost:5000/api/result/submit", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // token from auth context
     },
+    credentials: "include",
     body: JSON.stringify({ answers }),
   });
 
-  navigate("../result");
+  if (res.ok) {
+    navigate("/student/result"); // ✅ absolute path
+  }
 }
+
+
 
 
 

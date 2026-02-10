@@ -7,9 +7,7 @@ export default function Sidebar({ open, setOpen }) {
 
   return (
     <div className={`bg-slate-900 text-white w-64 p-6 transition-all`}>
-      <h2 className="text-2xl font-bold mb-8 text-pink-400">
-        Student Panel
-      </h2>
+      <h2 className="text-2xl font-bold mb-8 text-pink-400">Student Panel</h2>
 
       <div className="space-y-4">
         <SidebarItem
@@ -21,11 +19,15 @@ export default function Sidebar({ open, setOpen }) {
           }}
         />
 
-        <SidebarItem
-          icon={<Award />}
-          text="Your Results"
-          onClick={() => navigate("/result")}
-        />
+      <SidebarItem
+  icon={<Award />}
+  text="Your Results"
+  onClick={() => {
+    setOpen(false);
+    navigate("/student/result");
+  }}
+/>
+ 
 
         <SidebarItem
           icon={<BookOpen />}
@@ -33,16 +35,15 @@ export default function Sidebar({ open, setOpen }) {
           onClick={() => navigate("/courses")}
         />
 
-<SidebarItem
-  icon={<LogOut />}
-  text="Logout"
-  danger
-  onClick={() => {
-    localStorage.clear();
-    navigate("/login");
-  }}
-/>
-
+        <SidebarItem
+          icon={<LogOut />}
+          text="Logout"
+          danger
+          onClick={() => {
+            localStorage.clear();
+            navigate("/login");
+          }}
+        />
       </div>
     </div>
   );
