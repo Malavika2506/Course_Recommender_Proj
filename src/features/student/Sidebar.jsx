@@ -19,15 +19,14 @@ export default function Sidebar({ open, setOpen }) {
           }}
         />
 
-      <SidebarItem
-  icon={<Award />}
-  text="Your Results"
-  onClick={() => {
-    setOpen(false);
-    navigate("/student/result");
-  }}
-/>
- 
+        <SidebarItem
+          icon={<Award />}
+          text="Your Results"
+          onClick={() => {
+            setOpen(false);
+            navigate("/student/result");
+          }}
+        />
 
         <SidebarItem
           icon={<BookOpen />}
