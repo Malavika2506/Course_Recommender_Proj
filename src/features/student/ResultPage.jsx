@@ -4,16 +4,15 @@ export default function ResultPage() {
   const [result, setResult] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const courseDetails = {
-  mern: "Full stack development using MongoDB, Express, React, and Node.js.",
-  flutter: "Cross-platform mobile app development using Flutter.",
-  datasci: "Data analysis, visualization, and machine learning foundations.",
-  cybersecurity: "Security fundamentals, networks, and ethical hacking.",
-  react: "Frontend development with React ecosystem.",
-  pythonfs: "Backend development using Python and frameworks.",
-  uiux: "User interface and user experience design principles.",
-  devops: "CI/CD, cloud, containers, and deployment automation.",
-};
-
+    mern: "Full stack development using MongoDB, Express, React, and Node.js.",
+    flutter: "Cross-platform mobile app development using Flutter.",
+    datasci: "Data analysis, visualization, and machine learning foundations.",
+    cybersecurity: "Security fundamentals, networks, and ethical hacking.",
+    react: "Frontend development with React ecosystem.",
+    pythonfs: "Backend development using Python and frameworks.",
+    uiux: "User interface and user experience design principles.",
+    devops: "CI/CD, cloud, containers, and deployment automation.",
+  };
 
   useEffect(() => {
     fetch("http://localhost:5000/api/result/me", {
@@ -41,7 +40,7 @@ export default function ResultPage() {
         <h1 className="text-3xl font-bold mb-3">Recommended Course</h1>
 
         <h2 className="text-4xl font-extrabold text-pink-400 mb-6">
-          {result.recommended}
+          {result.recommended.toUpperCase()}
         </h2>
 
         <button
