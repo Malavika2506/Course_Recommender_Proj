@@ -4,6 +4,7 @@ import {
   Users,
   BarChart3,
   LogOut,
+  BookOpen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -34,6 +35,12 @@ export default function AdminSidebar() {
           text="Question Manager"
           onClick={() => navigate("/admin/questions")}
         />
+        <SidebarItem
+  icon={<BookOpen />}
+  text="Courses"
+  onClick={() => navigate("/admin/courses")}
+/>
+
 
         <SidebarItem
           icon={<BarChart3 />}

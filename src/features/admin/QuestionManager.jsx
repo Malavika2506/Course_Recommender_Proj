@@ -1,56 +1,3 @@
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-// import { Button } from "../../components/ui/button";
-
-// export default function QuestionManager() {
-//   const [questions, setQuestions] = useState([]);
-//   const [text, setText] = useState("");
-
-//   useEffect(() => {
-//     axios.get("http://localhost:5000/api/questions")
-//       .then(res => setQuestions(res.data));
-//   }, []);
-
-//   function addQuestion() {
-//     axios.post("http://localhost:5000/api/questions", {
-//       text,
-//       points: {
-//         mern: 2,
-//         flutter: 1,
-//         datasci: 1,
-//         cybersecurity: 1,
-//         react: 2,
-//         pythonfs: 2,
-//         uiux: 1,
-//         devops: 1,
-//       }
-//     }).then(res => {
-//       setQuestions([...questions, res.data]);
-//       setText("");
-//     });
-//   }
-
-//   return (
-//     <div className="p-6">
-//       <h2 className="text-xl font-bold mb-4">All Questions</h2>
-
-//       {questions.map(q => (
-//         <div key={q._id} className="border p-3 mb-2">
-//           {q.text}
-//         </div>
-//       ))}
-
-//       <input
-//         className="border p-2 w-full my-3"
-//         value={text}
-//         onChange={e => setText(e.target.value)}
-//         placeholder="New Question"
-//       />
-
-//       <Button onClick={addQuestion}>Add Question</Button>
-//     </div>
-//   );
-// }
 
 
 import { useEffect, useState } from "react";
@@ -70,62 +17,113 @@ const emptyPoints = {
 
 export default function QuestionManager() {
   const [questions, setQuestions] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [text, setText] = useState("");
   const [category, setCategory] = useState("mern");
+  const [selectedCourse, setSelectedCourse] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/questions")
-      .then(res => setQuestions(res.data));
+    fetchQuestions();
+    fetchCourses();
   }, []);
 
-  function addQuestion() {
-    const points = { ...emptyPoints };
+  // ✅ Fetch questions
+  const fetchQuestions = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/questions");
+      setQuestions(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    // Give strong weight to selected category
+  // ✅ Fetch courses from backend
+  const fetchCourses = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/courses");
+      setCourses(res.data);
+
+      // Set first course as default
+      if (res.data.length > 0) {
+        setSelectedCourse(res.data[0]._id);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const addQuestion = async () => {
+    if (!text || !selectedCourse) {
+      alert("Please enter question and select course");
+      return;
+    }
+
+    const points = { ...emptyPoints };
     points[category] = 3;
 
-    axios.post("http://localhost:5000/api/questions", {
-      text,
-      points,
-    }).then(res => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/questions",
+        {
+          text,
+          points,
+          course: selectedCourse, // ✅ send course id
+        }
+      );
+
       setQuestions([...questions, res.data]);
       setText("");
-    });
-  }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">All Questions</h2>
 
-      {questions.map(q => (
-        <div key={q._id} className="border p-3 mb-2">
-          {q.text}
+      {/* Questions List */}
+      {questions.map((q) => (
+        <div key={q._id} className="border p-3 mb-2 rounded">
+          <p>{q.text}</p>
+          {q.course && (
+            <p className="text-sm text-gray-500">
+              Course: {q.course.name}
+            </p>
+          )}
         </div>
       ))}
 
-      <input
-        className="border p-2 w-full my-3"
-        value={text}
-        onChange={e => setText(e.target.value)}
-        placeholder="New Question"
-      />
+      {/* Add Question Form */}
+      <div className="mt-6 border p-4 rounded-lg">
+        <input
+          className="border p-2 w-full mb-3"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Enter Question"
+        />
 
-      <select
-        className="border p-2 w-full mb-3"
-        value={category}
-        onChange={e => setCategory(e.target.value)}
-      >
-        <option value="mern">MERN</option>
-        <option value="flutter">Flutter</option>
-        <option value="datasci">Data Science</option>
-        <option value="cybersecurity">Cybersecurity</option>
-        <option value="react">React</option>
-        <option value="pythonfs">Python Full Stack</option>
-        <option value="uiux">UI/UX</option>
-        <option value="devops">DevOps</option>
-      </select>
+        {/* ✅ Course Dropdown from Backend */}
+        <select
+          className="border p-2 w-full mb-3"
+          value={selectedCourse}
+          onChange={(e) => setSelectedCourse(e.target.value)}
+        >
+          {courses.length === 0 ? (
+            <option value="">No Courses Available</option>
+          ) : (
+            courses.map((course) => (
+              <option key={course._id} value={course._id}>
+                {course.name}
+              </option>
+            ))
+          )}
+        </select>
 
-      <Button onClick={addQuestion}>Add Question</Button>
+       
+
+        <Button onClick={addQuestion}>Add Question</Button>
+      </div>
     </div>
   );
 }

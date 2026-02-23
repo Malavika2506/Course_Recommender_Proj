@@ -13,6 +13,7 @@ import AdminDashboard from "./features/admin/AdminDashboard";
 import QuestionManager from "./features/admin/QuestionManager";
 import CourseAnalytics from "./features/admin/CourseAnalytics";
 import StudentList from "./features/admin/StudentList";
+import Courses from "./features/admin/Courses";
 
 /* ---------- STUDENT ---------- */
 import StudentLayout from "./features/student/StudentLayout";
@@ -42,6 +43,8 @@ function App() {
         <Route path="questions" element={<QuestionManager />} />
         <Route path="analytics" element={<CourseAnalytics />} />
         <Route path="students" element={<StudentList />} />
+        <Route path="courses" element={<Courses />} />
+
       </Route>
 
       {/* ========== STUDENT ROUTES ========== */}
