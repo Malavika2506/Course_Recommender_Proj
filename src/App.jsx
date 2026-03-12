@@ -14,6 +14,7 @@ import QuestionManager from "./features/admin/QuestionManager";
 import CourseAnalytics from "./features/admin/CourseAnalytics";
 import StudentList from "./features/admin/StudentList";
 import Courses from "./features/admin/Courses";
+import AdminSettingPage from "./features/admin/AdminSettingPage";
 
 /* ---------- STUDENT ---------- */
 import StudentLayout from "./features/student/StudentLayout";
@@ -22,12 +23,14 @@ import QuestionnaireInstructions from "./features/student/QuestionnaireInstructi
 import Questionnaire from "./features/student/Questionnaire";
 import ResultPage from "./features/student/ResultPage";
 import CourseDetails from "./features/student/CourseDetails";
+import ProfilePage from "./features/student/ProfilePage";
 
 function App() {
   return (
     <Routes>
       {/* ========== PUBLIC ROUTES ========== */}
       <Route path="/" element={<HomePage />} />
+
       <Route path="/login" element={<LoginPage />} />
 
       {/* ========== ADMIN ROUTES ========== */}
@@ -44,6 +47,8 @@ function App() {
         <Route path="analytics" element={<CourseAnalytics />} />
         <Route path="students" element={<StudentList />} />
         <Route path="courses" element={<Courses />} />
+        <Route path="settings" element={<AdminSettingPage />} />
+
 
       </Route>
 
@@ -73,6 +78,8 @@ function App() {
 
         {/* Course Details */}
         <Route path="courses" element={<CourseDetails />} />
+        <Route path="/student/profile" element={<ProfilePage />} />
+
       </Route>
 
       {/* ========== 404 ========== */}
